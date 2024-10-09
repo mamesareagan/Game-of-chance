@@ -1,4 +1,4 @@
-#include "hacking.h"
+#include "game.h"
 
 // Function to display an error message and then exit
 void fatal(const char *message) {
