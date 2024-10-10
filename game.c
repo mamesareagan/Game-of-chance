@@ -65,7 +65,7 @@ void print_typing_effect(const char *message, int delay) {
  */
 void register_new_player(void)
 {
-	int fd, delay = 0.75;
+	int fd, delay = 0.95;
 	char * user_greeting = "Hello Buddy, first have a name!.";
 	
 	printf("----------[New player registration]----------\n");
