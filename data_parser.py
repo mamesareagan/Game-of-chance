@@ -14,7 +14,8 @@ def get_pointer_size():
 
 def parse_user_data(file_content, pointer_size):
     """Parse user data from the provided file content."""
-    user_struct_size = 12 + 100 + pointer_size  # 12 bytes for 3 integers, 100 bytes for name, and pointer_size
+    user_struct_size = 12 + 30 + pointer_size  # 12 bytes for 3 integers,
+    #30 bytes for name, and pointer_size
 
     offset = 0
 
@@ -23,8 +24,8 @@ def parse_user_data(file_content, pointer_size):
     offset += 12  # Move offset by 12 bytes
 
     # Read the name (100 bytes)
-    name = file_content[offset:offset + 100].decode('ascii').strip('\x00')  # Decode and strip nulls
-    offset += 100  # Move the offset forward by 100 bytes
+    name = file_content[offset:offset + 30].decode('ascii').strip('\x00')  # Decode and strip nulls
+    offset += 30  # Move the offset forward by 30 bytes
 
     print(f"Integer 1: {int1}")
     print(f"Integer 2: {int2}")
@@ -46,7 +47,7 @@ def parse_user_data(file_content, pointer_size):
     for i in range(total_users):
         user_offset = offset + (i * user_struct_size)
 
-        # Read the user struct: 3 integers, 100-byte name, and function pointer (int/long based on system)
+        # Read the user struct: 3 integers, 30-byte name, and function pointer
         uid, credits, highscore = struct.unpack_from('<III', file_content, user_offset)
         name = file_content[user_offset + 12:user_offset + 112].decode('ascii').strip('\x00')  # Decode and strip nulls
         current_game_ptr = struct.unpack_from('<I' if pointer_size == 4 else '<Q', file_content, user_offset + 112)[0]
