@@ -9,8 +9,8 @@
 // Define the user struct with typedef
 typedef struct {
     int uid;               // User ID
-    int credits;           // User credits
-    int highscore;         // User high score
+    unsigned int credits;           // User credits
+    unsigned int highscore;         // User high score
     char name[30];        // User name
     int (*current_game)(); // Pointer to current game function
 } User;
