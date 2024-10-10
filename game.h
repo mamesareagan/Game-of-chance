@@ -12,7 +12,7 @@ typedef struct {
     unsigned int credits;           // User credits
     unsigned int highscore;         // User high score
     char name[30];        // User name
-    int (*current_game)(); // Pointer to current game function
+    int (*current_game)(void); // Pointer to current game function
 } User;
 
 
@@ -28,8 +28,8 @@ void jackpot();
 void input_name();
 void print_cards(char *, char *, int);
 int take_wager(int, int);
-void play_the_game();
-int pick_a_number();
+void play_the_game(void);
+int pick_a_number(void);
 int dealer_no_match();
 int find_the_ace();
 
