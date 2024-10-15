@@ -1,5 +1,5 @@
-#ifndef HACKING_H
-#define HACKING_H
+#ifndef GAME_H
+#define GAME_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
