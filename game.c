@@ -132,74 +132,46 @@ void jackpot(void)
  *
  */
 void play_the_game()
-{
-    int winning_number = rand() % 20 + 1; // Random number between 1 and 20
-    int player_guess;
+{ 
+	int play_again = 1;
+    	char selection;
 
-    printf("####### Pick a Number ######\n");
-    printf("This game costs 10 credits to play. Simply pick a number\n");
-    printf("between 1 and 20, and if you pick the winning number, you\n");
-    printf("will win the jackpot of 100 credits!\n");
+	while (play_again)
+	{
+        	printf("\n[DEBUG] current_game pointer @ %p\n", (void*)player.current_game);
 
-    // Deduct credits, check if the player can play
-    if (player.credits < 10) {
-        printf("You do not have enough credits to play.\n");
-        return; // Exit the game if the player can't afford to play
-    }
+        	// Check if the current game plays successfully
+        	if (player.current_game() != -1)
+		{
+            		// If the game plays without error, check if a new high score is achieved
+            		if (player.credits > player.highscore) 
+                		player.highscore = player.credits;  // Update high score          		
+			printf("\nYou now have %u credits\n", player.credits);
+            		update_player_data();  // Save the new credit total to file
 
-    player.credits -= 10; // Deduct credits
-    printf("10 credits have been deducted from your account.\n");
+            		// Ask the player if they want to play again
+            		printf("Would you like to play again? (y/n) ");
+            		selection = '\n';  // Initialize selection with newline
 
-    // Loop until valid input is provided
-    while (1) {
-        printf("Pick a number between 1 and 20: ");
-        if (scanf("%d", &player_guess) != 1) {
-            // Clear the buffer if input is not a number
-            while (getchar() != '\n');
-            printf("Invalid input. Please enter a number between 1 and 20.\n");
-            continue; // Ask for input again
-        }
+            		// Clear any extra newlines or invalid input
+            		while (selection == '\n') 
+			{
+                		scanf(" %c", &selection);  // Skip leading whitespaces
+            		}
 
-        // Validate the player's guess
-        if (player_guess < 1 || player_guess > 20) {
-            printf("Invalid input. Please pick a number between 1 and 20.\n");
-            continue; // Ask for input again
-        }
-
-        // Proceed with the game if input is valid
-        printf("The winning number is %d\n", winning_number);
-        if (player_guess == winning_number)
-            printf("Congratulations! You won!\n");
-        else
-            printf("Sorry, you didn't win.\n");
-
-        printf("You now have %u credits\n", player.credits);
-        break; // Exit the loop after a valid guess
-    }
-
-    // Prompt to play again
-    char play_again;
-    while (1) {
-        printf("Would you like to play again? (y/n): ");
-        scanf(" %c", &play_again); // Space before %c to handle newline
-
-        // Check for valid input
-        if (play_again == 'y' || play_again == 'Y') {
-            // Call the game again or reset as necessary
-            play_the_game();
-            return; // Exit the current game loop
-        } else if (play_again == 'n' || play_again == 'N') {
-            // Just return to the menu
-            printf("Returning to the menu...\n");
-            return; // Exit the game function and return to the main menu
-        } else {
-            // Handle invalid input
-            printf("Invalid choice. Please enter 'y' or 'n'.\n");
-            continue; // Ask again
-        }
-    }
+            		// Exit the loop if the player does not want to play again
+           		if (selection == 'n' || selection == 'N') 
+			{
+                		play_again = 0;
+            		}
+        	}
+		else 
+		{
+            		// If the game returns an error, exit the loop
+            		play_again = 0;
+        	}
+	}
 }
-
 /**
  * Writes the current player data to the file.
  * Used for updates
@@ -229,4 +201,82 @@ void update_player_data(void)
     printf("User ID %d not found!\n", player.uid);
 }
 
-		
+/**
+ * This function inputs wagers .It expects the available credits and previous wagers as arguments
+ * Returns -1 if wager is too big or too little otherwise returns the wager amount
+ */
+int take_wager(int available_credits, int previous_wager)
+{
+	int wager, total_wager;
+
+	printf("How many of your %d credits would you like to wager? ", available_credits);
+	scanf("%d", &wager);
+
+	if (wager < 1)
+	{
+		printf("Nice try, but you must wager a positive number!\n");
+		return -1;
+	}
+	total_wager = previous_wager + wager;
+	if (total_wager > available_credits)
+	{
+		printf("Your total wager of %d is more than you have!\n", total_wager);		
+		printf("You only have %d available credits, try again.\n", available_credits);
+		return -1;
+	}
+	return wager;
+}
+
+/**
+ * This is the No Match Dealer game
+ * returns -1 if the player has 0 credits
+ */
+int dealer_no_match()
+{
+	int i, j, numbers[16], wager = -1, match = -1;
+	
+	printf("\n::::::: No Match Dealer :::::::\n");
+	printf("In this game, you can wager up to all of your credits.\n");
+	printf("The dealer will deal out 16 random numbers between 0 and 99.\n");
+	printf("If there are no matches among them, you double your money!\n\n");
+
+	if (player.credits == 0)
+	{
+		printf("You don't have any credits to wager!\n\n");
+		return -1;
+	}
+	while (wager == -1)
+		wager = take_wager(player.credits, 0);
+	printf("\t\t::: Dealing out 16 random numbers :::\n");
+	//assign random numbers to numbers
+	for (i = 0; i < 16; i++)
+	{
+		numbers[i] = rand() % 100;	//pick a number between 0 and 99
+		printf("%2d\t", numbers[i]);
+		if (i % 8 == 7)
+			printf("\n");
+	}
+	//loop looking for matches
+	for (i = 0; i < 15; i++)
+	{
+		j = i + 1;
+		while (j < 16)
+		{
+			if (numbers[i] == numbers[j])
+				match = numbers[i];
+			j++;
+		}
+	}
+	if (match != -1)
+	{
+		printf("The dealer matched the number %d\n", match);
+		printf("You lose %d credits\n", wager);
+		player.credits -= wager;
+	}
+	else
+	{
+		printf("There were no matches! You win %d credits!\n", wager);
+		player.credits += wager;
+	}
+	return 0;
+}

@@ -10,7 +10,7 @@ int main(void)
 	srand(time(0));	/*seed the randomizer with the current time*/
 	if (get_player_data() == -1)
 		register_new_player();
-	printf("[DEBUG] Address of pick_a_number: %p\n", (void*)pick_a_number);
+
 	while (choice != 7)
 	{
 		printf("-~~~[Game of Chance Menu]~~~-\n");
@@ -36,17 +36,15 @@ int main(void)
 		{
 			if(choice != last_game)	//if the function ptr in the struct isnt set yet
 			{
-				if (choice == 1)
-				{
-					printf("[DEBUG] Address of pick_a_number: %p\n", (void*)pick_a_number);
-					player.current_game = &pick_a_number;
-					printf("Current game function pointer: %p\n", (void*)player.current_game);
-
-					last_game = choice;
-				}
+				if (choice == 1){
+					printf("executed");
+					player.current_game = &pick_a_number;}
+				else if (choice == 2)
+					player.current_game = &dealer_no_match;
+				last_game = choice;
 			}
 			play_the_game();
-			update_player_data();
+			
 		}
 		
 	}
