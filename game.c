@@ -280,3 +280,143 @@ int dealer_no_match()
 	}
 	return 0;
 }
+
+/**
+ * This is the Find the Ace game
+ * Returns -1 if the player haas 0 credits
+ */
+int find_the_ace()
+{
+	int i, ace, invalid_choice, pick = -1, wager_one = -1, wager_two = -1;
+	char choice_two, cards[] = {'X', 'X', 'X'};
+
+	ace = rand()%3;
+
+	printf("\n******* Find the Ace *******\n");
+	printf("In this game, you can wager up to all of your credits.\n");
+	printf("Three cards will be dealt out, two queens and one ace.\n");
+	printf("If you find the ace, you will win your wager.\n");
+	printf("After choosing a card, one of the queens will be revealed.\n");
+	printf("At this point, you may either select a different card or\n");
+	printf("increase your wager.\n\n");
+
+	if (player.credits == 0)
+	{
+		printf("You don't have any credits to wager!\n\n");
+		return(-1);
+	}
+
+	while (wager_one == -1)
+		wager_one = take_wager(player.credits, 0);
+	print_cards("Dealing cards", cards, -1);
+	pick = -1;
+	
+	while ((pick < 1) || (pick > 3)) 
+	{
+		printf("Select a card: 1, 2, 3 ");
+		scanf("%d", &pick);
+	}
+	pick--;	//adjust pick since card numbering starts at 0
+	i = 0;
+	while (i == ace || i == pick)
+		i = (i + 1) % 3;	//wraps around 0,1,2
+	cards[i] = 'Q';
+	print_cards("Revealing a queen", cards, pick);
+
+	    // Handle the choice between changing the pick or increasing the wager.
+	invalid_choice = 1;
+    	while (invalid_choice) 
+	{
+        	printf("Would you like to:\n[c]hange your pick\tor\t[i]ncrease your wager?\n");
+        	printf("Select c or i: ");
+        
+        	// Flush extra newlines.
+        	choice_two = '\n';
+        	while (choice_two == '\n')
+		{
+            		scanf(" %c", &choice_two);  // Space before %c to ignore whitespaces/newlines.
+        	}
+
+        	// Handle wager increase.
+        	if (choice_two == 'i')
+		{
+            		invalid_choice = 0;  // Valid choice.
+            		wager_two = -1;  // Reset second wager.
+            		while (wager_two == -1)
+			{
+                		wager_two = take_wager(player.credits, wager_one);  // Loop until valid second wager.
+            		}
+        	}
+
+        	// Handle card change.
+	        if (choice_two == 'c')
+		{
+        		invalid_choice = 0;  // Valid choice.
+            		i = 0;
+            		while (i == pick || cards[i] == 'Q')
+			{
+                		i = (i + 1) % 3;  // Loop until the other valid card is found.
+            		}
+            		pick = i;  // Change the pick to the other card.
+            		printf("Your card pick has been changed to card %d\n", pick + 1);
+        	}
+    	}
+
+    	// Reveal all of the cards.
+    	for (i = 0; i < 3; i++)
+	{
+        	if (ace == i)
+            		cards[i] = 'A';
+        	else
+            		cards[i] = 'Q';
+    	}
+
+    	print_cards("End result", cards, pick);
+
+    	// Handle win or loss.
+    	if (pick == ace)
+	{  // Player wins.
+        	printf("You have won %d credits from your first wager\n", wager_one);
+        	player.credits += wager_one;
+        	if (wager_two != -1)
+		{
+            		printf("and an additional %d credits from your second wager!\n", wager_two);
+            		player.credits += wager_two;
+        	}
+    	}
+	else
+    	{  // Player loses.
+        	printf("You have lost %d credits from your first wager\n", wager_one);
+        	player.credits -= wager_one;
+        	if (wager_two != -1)
+		{
+            		printf("and an additional %d credits from your second wager!\n", wager_two);
+            		player.credits -= wager_two;
+        	}
+    	}
+
+    	return 0;
+}
+
+/**
+ * Prints the 3 cards for the Find the Ace Game
+ * Args: Message to display, pointer to the cards array and the crd a user has picked.
+ * if the pick is -1 then the selection numbers are displayed.
+ */
+void print_cards(char *message, char *cards, int user_pick)
+{
+	int i;
+
+	printf("\n\t*** %s ***\n", message);
+	printf("	\t._.\t._.\t._.\n");
+	printf("Cards:\t|%c|\t|%c|\t|%c|\n\t", cards[0], cards[1], cards[2]);
+	if (user_pick == -1)
+		printf(" 1 \t 2 \t 3\n");
+	else
+	{
+		for (i=0; i < user_pick; i++)
+			printf("\t");
+		printf(" ^-- your pick\n");
+	}
+}
+
