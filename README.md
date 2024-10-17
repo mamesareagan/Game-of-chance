@@ -14,6 +14,7 @@ To build and compile the program, navigate to the project directory and run:
 
 ```bash
 make
+```
 
 This will generate the executable `myprogram`.
 
@@ -25,12 +26,12 @@ Before running the program, you need to set the appropriate ownership and permis
 
   ```bash
   sudo chown root:root ./myprogram
-
+  ```
 - Set SUID permission (this allows the program to run with root privileges when necessary):
 
   ```bash
   sudo chmod u+s ./myprogram
-
+  ```
 These commands ensure the program can access necessary files securely and manage permissions properly.
 
 ## 🕹️ Running the Program
@@ -39,17 +40,7 @@ Once compiled and set up, run the program by executing the following command:
 
 ```bash
 ./myprogram
-
-Here’s your content formatted in Markdown:
-
-markdown
-
-## 🕹️ Running the Program
-
-Once compiled and set up, run the program by executing the following command:
-
-```bash
-./myprogram
+```
 
 You'll be greeted with a menu where you can choose from different games, manage your credits, and aim for the high score.
 
