@@ -38,9 +38,11 @@ int main(void)
 			{
 				if (choice == 1){
 					printf("executed");
-					player.current_game = &pick_a_number;}
+					player.current_game = pick_a_number;}
 				else if (choice == 2)
-					player.current_game = &dealer_no_match;
+					player.current_game = dealer_no_match;
+				else
+					player.current_game = find_the_ace;
 				last_game = choice;
 			}
 			play_the_game();
