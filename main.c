@@ -46,7 +46,19 @@ int main(void)
 				last_game = choice;
 			}
 			play_the_game();
-			
+		}
+		else if (choice == 4)
+			show_highscore();
+		else if (choice == 5)
+		{
+			printf("\nChange user name\n");
+			input_name();
+			printf("Your name has been changed.\n\n");
+		}
+		else if (choice == 6)
+		{
+			printf("\nYour account has been reset with 100 credits.\n\n");
+			player.credits = 100;			
 		}
 		
 	}

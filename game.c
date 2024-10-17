@@ -1,4 +1,5 @@
 #include "game.h"
+#include <string.h>
 #include <stdint.h>
 
 /**
@@ -441,7 +442,7 @@ void show_highscore() {
         	fatal("in show_highscore() while opening file");
 
     	// Loop through the file to find the highest score
-    	while (read(fd, &entry, sizeof(struct user)) > 0)
+    	while (read(fd, &entry, sizeof(User)) > 0)
 	{
         	if (entry.highscore > top_score)
 		{
