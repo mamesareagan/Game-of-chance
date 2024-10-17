@@ -420,3 +420,44 @@ void print_cards(char *message, char *cards, int user_pick)
 	}
 }
 
+/**
+ * show_highscore - Displays the highest score and the player who set it.
+ * 
+ * This function reads player data from a file and finds the highest score. 
+ * If the current player holds the high score, it displays their score, 
+ * otherwise, it shows the top score and the player's name.
+ */
+void show_highscore() {
+	unsigned int top_score = 0;
+	char top_name[100] = {0};  // Initialize to zero
+	User entry;
+    	int fd;
+
+    	printf("\n====================| HIGH SCORE |====================\n");
+
+    	// Open the file in read-only mode
+    	fd = open(DATAFILE, O_RDONLY);
+    	if (fd == -1)
+        	fatal("in show_highscore() while opening file");
+
+    	// Loop through the file to find the highest score
+    	while (read(fd, &entry, sizeof(struct user)) > 0)
+	{
+        	if (entry.highscore > top_score)
+		{
+            		top_score = entry.highscore;  // Update top score
+            		strncpy(top_name, entry.name, sizeof(top_name) - 1);  // Safely copy the name
+            		top_name[sizeof(top_name) - 1] = '\0';  // Null-terminate the string
+        	}
+    	}
+
+    	close(fd);  // Close the file
+
+    	// Display the result
+    	if (top_score > player.highscore)
+        	printf("%s has the high score of %u credits!\n", top_name, top_score);
+    	else
+        	printf("You currently have the high score of %u credits!\n", player.highscore);
+
+    	printf("======================================================\n\n");
+}
